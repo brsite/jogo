@@ -270,6 +270,47 @@
             font-size: 16px;
             color: #333;
         }
+        #restart-menu {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 30;
+            max-width: 300px;
+            text-align: center;
+        }
+        #restart-menu p {
+            margin: 0 0 20px 0;
+            font-size: 18px;
+            color: #333;
+        }
+        #restart-menu button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin: 0 10px;
+        }
+        #restart-menu .confirm-button {
+            background-color: #2196f3;
+        }
+        #restart-menu .confirm-button:hover {
+            background-color: #1976d2;
+        }
+        #restart-menu .cancel-button {
+            background-color: #ff4d4d;
+        }
+        #restart-menu .cancel-button:hover {
+            background-color: #cc0000;
+        }
     </style>
 </head>
 <body>
@@ -320,6 +361,11 @@
             <button class="skip-button" onclick="skipImage()">Pular</button>
             <button class="restart-button" onclick="restartGame()">Reiniciar</button>
         </div>
+    </div>
+    <div id="restart-menu">
+        <p>Deseja realmente reiniciar o jogo?</p>
+        <button class="confirm-button" onclick="confirmRestart()">Sim</button>
+        <button class="cancel-button" onclick="cancelRestart()">Não</button>
     </div>
     <audio id="correctSound" src="acertou.mp3"></audio>
     <audio id="errorSound" src="errou.mp3"></audio>
@@ -465,6 +511,7 @@
         const menuElement = document.getElementById("menu");
         const gameContainer = document.getElementById("game-container");
         const aboutMenu = document.getElementById("about-menu");
+        const restartMenu = document.getElementById("restart-menu");
         const correctSound = document.getElementById("correctSound");
         const errorSound = document.getElementById("errorSound");
         const soundToggleButton = document.getElementById("sound-toggle");
@@ -684,14 +731,18 @@
         }
 
         function restartGame() {
-            currentIndex = 0;
-            score = 0;
-            imageElement.src = images[currentIndex].src;
-            imageElement.style.opacity = 1;
-            inputElement.value = "";
-            messageElement.textContent = "";
-            scoreElement.textContent = "⭐ Pontuação: 0";
-            startTimer();
+            restartMenu.style.display = "block";
+        }
+
+        function confirmRestart() {
+            gameContainer.style.display = "none";
+            menuElement.style.display = "block";
+            restartMenu.style.display = "none";
+            clearInterval(timer);
+        }
+
+        function cancelRestart() {
+            restartMenu.style.display = "none";
         }
 
         function clearInput() {
