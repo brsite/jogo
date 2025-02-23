@@ -57,6 +57,11 @@
             border: 2px solid #ccc;
             border-radius: 5px;
             outline: none;
+            background-color: white;
+        }
+        input:disabled {
+            cursor: not-allowed;
+            opacity: 0.8; /* Leve transparência para indicar desabilitado */
         }
         .clear-button {
             position: absolute;
@@ -273,18 +278,18 @@
         <img src="jogo.jpg" alt="Imagem do Jogo">
         <button class="sequential-button" onclick="startGame(false)">Sequencial</button>
         <button class="random-button" onclick="startGame(true)">Modo Aleatório</button>
+        <button id="sound-toggle" onclick="toggleSound()" style="background-color: #f44336; margin-top: 10px;">Desativar Sons</button>
         <button class="about-button" onclick="showAbout()">Sobre</button>
-        <button id="sound-toggle" onclick="toggleSound()" style="background-color: #9c27b0; margin-top: 10px;">Ativar Sons</button>
     </div>
     <div id="about-menu">
         <button class="close-button" onclick="hideAbout()">X</button>
-        <p>Este jogo foi criado pra facilitar aprender os códigos de verduras. O desenvolvedor se isenta de responsabilidade pelos códigos e alteração e atualização favor consultar o código atual.</p>
+        <p>Jogo criado para facilitar no aprendizado dos códigos de verduras e frutas. As imagens são meramente ilustrativas. Alguns códigos estão sujeitos a alterações ou podem se tornar indisponíveis ao longo do tempo.</p>
     </div>
     <div id="game-container">
         <div class="info-container">
             <p id="score">⭐ Pontuação: 0</p>
             <p id="timer">⏳ 60s</p>
-            <button id="sound-toggle-btn" class="sound-toggle-btn" onclick="toggleSound()">🔈</button>
+            <button id="sound-toggle-btn" class="sound-toggle-btn" onclick="toggleSound()">🔊</button>
         </div>
         <div class="image-container">
             <img id="image" src="alface.jpg" alt="Verdura">
@@ -449,7 +454,7 @@
         let score = 0;
         let timeLeft = 60;
         let timer;
-        let soundEnabled = false;
+        let soundEnabled = true; // Som começa ativado
 
         const imageElement = document.getElementById("image");
         const loadingElement = document.getElementById("loading");
@@ -465,6 +470,29 @@
         const soundToggleButton = document.getElementById("sound-toggle");
         const soundToggleBtn = document.getElementById("sound-toggle-btn");
 
+        // Função para detectar se é dispositivo móvel
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Desativa o input em dispositivos móveis
+        if (isMobileDevice()) {
+            inputElement.disabled = true;
+        }
+
+        // Adiciona evento de teclado para Enter e vírgula no desktop
+        if (!isMobileDevice()) {
+            inputElement.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    handleEnter();
+                    event.preventDefault();
+                } else if (event.key === ",") {
+                    handleComma();
+                    event.preventDefault();
+                }
+            });
+        }
+
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -477,13 +505,19 @@
             soundEnabled = !soundEnabled;
             soundToggleButton.textContent = soundEnabled ? "Desativar Sons" : "Ativar Sons";
             soundToggleButton.style.backgroundColor = soundEnabled ? "#f44336" : "#9c27b0";
-            soundToggleBtn.textContent = soundEnabled ? "🔈" : "🔇";
+            soundToggleBtn.textContent = soundEnabled ? "🔊" : "🔇";
         }
 
         function playSound(sound) {
             if (soundEnabled) {
                 sound.currentTime = 0;
                 sound.play();
+            }
+        }
+
+        function vibrate(duration) {
+            if (soundEnabled && "vibrate" in navigator) {
+                navigator.vibrate(duration);
             }
         }
 
@@ -499,7 +533,7 @@
             scoreElement.textContent = "⭐ Pontuação: 0";
             inputElement.value = "";
             messageElement.textContent = "";
-            soundToggleBtn.textContent = soundEnabled ? "🔈" : "🔇";
+            soundToggleBtn.textContent = soundEnabled ? "🔊" : "🔇";
             startTimer();
         }
 
@@ -540,6 +574,8 @@
                     clearInterval(timer);
                     score -= 5;
                     showMessage("Tempo esgotado!", "red");
+                    playSound(errorSound);
+                    vibrate(200); // Vibração depende de soundEnabled
                     document.body.style.backgroundColor = "red";
                     setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
                     scoreElement.textContent = `⭐ Pontuação: ${score}`;
@@ -590,6 +626,7 @@
             if (inputElement.value.trim() === "") {
                 showMessage("Digite um código!", "red");
                 playSound(errorSound);
+                vibrate(200); // Vibração depende de soundEnabled
                 return;
             }
             if (inputElement.value === images[currentIndex].code) {
@@ -614,6 +651,7 @@
                 messageElement.style.color = "red";
                 showMessage("CÓDIGO ERRADO!", "red");
                 playSound(errorSound);
+                vibrate(200); // Vibração depende de soundEnabled
                 document.body.style.backgroundColor = "red";
                 setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
                 inputElement.value = "";
@@ -665,6 +703,7 @@
                 score -= 5;
                 showMessage("Este item é vendido pela Unidade, use Enter!", "red");
                 playSound(errorSound);
+                vibrate(200); // Vibração depende de soundEnabled
                 document.body.style.backgroundColor = "red";
                 setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
                 scoreElement.textContent = `⭐ Pontuação: ${score}`;
@@ -680,6 +719,7 @@
                 score -= 5;
                 showMessage("Utilize a vírgula para pesar!", "red");
                 playSound(errorSound);
+                vibrate(200); // Vibração depende de soundEnabled
                 document.body.style.backgroundColor = "red";
                 setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
                 scoreElement.textContent = `⭐ Pontuação: ${score}`;
