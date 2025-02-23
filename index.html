@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo das Verduras</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.5s;
+            padding: 10px;
+            background-color: #f4f4f4;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        img {
+            width: 250px;
+            height: 200px;
+            object-fit: cover;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: opacity 0.5s ease-in-out;
+        }
+        .image-container {
+            position: relative;
+            width: 250px;
+            height: 200px;
+            margin: 10px auto;
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #333;
+            font-weight: bold;
+            display: none;
+        }
+        .input-container {
+            position: relative;
+            width: 90%;
+            max-width: 300px;
+            margin: 10px auto;
+        }
+        input {
+            font-size: 18px;
+            padding: 10px 40px 10px 10px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+        }
+        .clear-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .clear-button:hover {
+            background-color: #cc0000;
+        }
+        #message {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px;
+            color: #333;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+            display: none;
+        }
+        .info-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 10px auto;
+            max-width: 300px;
+            background-color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .info-container p {
+            margin: 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            justify-content: center;
+            margin: 20px auto;
+            max-width: 300px;
+        }
+        .key {
+            width: 100%;
+            height: 60px;
+            font-size: 20px;
+            text-align: center;
+            line-height: 60px;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.3s;
+        }
+        .key:hover {
+            background-color: #bdbdbd;
+        }
+        .key.comma {
+            background-color: #4caf50;
+            color: white;
+            font-size: 30px;
+        }
+        .key.enter {
+            background-color: #2196f3;
+            color: white;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .action-buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .action-buttons .hint-button {
+            background-color: #4CAF50;
+        }
+        .action-buttons .hint-button:hover {
+            background-color: #45a049;
+        }
+        .action-buttons .skip-button {
+            background-color: #ff9800;
+        }
+        .action-buttons .skip-button:hover {
+            background-color: #e68900;
+        }
+        .action-buttons .restart-button {
+            background-color: #2196f3;
+        }
+        .action-buttons .restart-button:hover {
+            background-color: #1976d2;
+        }
+        #menu {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 20;
+            text-align: center;
+        }
+        #menu h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #333;
+        }
+        #menu img {
+            width: 150px;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+        #menu button {
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #menu .sequential-button {
+            background-color: #2196f3;
+        }
+        #menu .sequential-button:hover {
+            background-color: #1976d2;
+        }
+        #menu .random-button {
+            background-color: #4CAF50;
+        }
+        #menu .random-button:hover {
+            background-color: #45a049;
+        }
+        #menu .about-button {
+            background-color: #ff9800;
+        }
+        #menu .about-button:hover {
+            background-color: #e68900;
+        }
+        #game-container {
+            display: none;
+        }
+        #about-menu {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 30;
+            max-width: 300px;
+            text-align: left;
+        }
+        #about-menu .close-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+        #about-menu .close-button:hover {
+            background-color: #cc0000;
+        }
+        #about-menu p {
+            margin: 10px 0 0 0;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu">
+        <h1>Jogo das Verduras</h1>
+        <img src="jogo.jpg" alt="Imagem do Jogo">
+        <button class="sequential-button" onclick="startGame(false)">Sequencial</button>
+        <button class="random-button" onclick="startGame(true)">Modo Aleatório</button>
+        <button class="about-button" onclick="showAbout()">Sobre</button>
+    </div>
+    <div id="about-menu">
+        <button class="close-button" onclick="hideAbout()">X</button>
+        <p>Este jogo foi criado pra facilitar aprender os códigos de verduras. O desenvolvedor se isenta de responsabilidade pelos códigos e alteração e atualização favor consultar o código atual.</p>
+    </div>
+    <div id="game-container">
+        <div class="info-container">
+            <p id="score">⭐ Pontuação: 0</p>
+            <p id="timer">⏳ 60s</p>
+        </div>
+        <div class="image-container">
+            <img id="image" src="alface.jpg" alt="Verdura">
+            <div class="loading" id="loading">Carregando...</div>
+            <p id="message"></p>
+        </div>
+        <br>
+        <div class="input-container">
+            <input type="text" id="codeInput" maxlength="10" placeholder="Digite o código">
+            <button class="clear-button" onclick="clearInput()">X</button>
+        </div>
+        <div class="keyboard">
+            <div class="key">7</div>
+            <div class="key">8</div>
+            <div class="key">9</div>
+            <div class="key">4</div>
+            <div class="key">5</div>
+            <div class="key">6</div>
+            <div class="key">1</div>
+            <div class="key">2</div>
+            <div class="key">3</div>
+            <div class="key">0</div>
+            <div class="key comma">,</div>
+            <div class="key enter">Enter</div>
+        </div>
+        <div class="action-buttons">
+            <button class="hint-button" onclick="showHint()">Dica</button>
+            <button class="skip-button" onclick="skipImage()">Pular</button>
+            <button class="restart-button" onclick="restartGame()">Reiniciar</button>
+        </div>
+    </div>
+    <script>
+        const originalImages = [
+//          { src: "AAAA.jpg", code: "00", nome: "AAA" },
+            { src: "verdura_acelga.jpg", code: "6705", nome: "Acelga" },
+            { src: "verdura_agriao.jpg", code: "6712", nome: "Agrião" },
+            { src: "verdura_alecrim.jpg", code: "6989", nome: "Alecrim" },
+            { src: "verdura_alface_americano.jpg", code: "6729", nome: "Alface Americano" },
+            { src: "verdura_alface_frisada.jpg", code: "1415735", nome: "Alface Frisada" },
+            { src: "verdura_alface_crespa.jpg", code: "6736", nome: "Alface Crespa" },
+            { src: "verdura_alface_lisa.jpg", code: "6743", nome: "Alface Lisa" },
+            { src: "verdura_alface_mimosa.jpg", code: "7917", nome: "Alface Mimosa" },
+            { src: "verdura_alho_poro.jpg", code: "6767", nome: "Alho Poró" },
+            { src: "verdura_almeirao.jpg", code: "6774", nome: "Almeirão" },
+            { src: "verdura_almeirao_roxo.jpg", code: "6781", nome: "Almeirão Roxo" },
+            { src: "verdura_brocolis_cabeca.jpg", code: "6798", nome: "Brócolis Cabeça" },
+            { src: "verdura_brocolis_maco.jpg", code: "6804", nome: "Brócolis Maço" },
+            { src: "verdura_cebolinha.jpg", code: "6811", nome: "Cebolinha" },
+            { src: "verdura_cheiro_verde.jpg", code: "6828", nome: "Cheiro Verde" },
+            { src: "verdura_chicoria.jpg", code: "6835", nome: "Chicória" },
+            { src: "verdura_coentro.jpg", code: "6842", nome: "Coentro" },
+            { src: "verdura_couve.jpg", code: "6859", nome: "Couve" },
+            { src: "verdura_couve_frisada.jpg", code: "1466607", nome: "Couve Frisada" },
+            { src: "verdura_couve_triturada.jpg", code: "6866", nome: "Couve Triturada" },
+            { src: "verdura_ervas.jpg", code: "6873", nome: "Ervas" },
+            { src: "verdura_espinafre.jpg", code: "6880", nome: "Espinafre" },
+            { src: "verdura_hortela.jpg", code: "6897", nome: "Hortelã" },
+            { src: "verdura_menjericao.jpg", code: "6903", nome: "Manjericão" },
+            { src: "verdura_mostarda.jpg", code: "6910", nome: "Mostarda" },
+            { src: "verdura_nabo.jpg", code: "6927", nome: "Nabo" },
+            { src: "verdura_rabanete.jpg", code: "6934", nome: "Rabanete" },
+            { src: "verdura_rucula.jpg", code: "6941", nome: "Rúcula" },
+            { src: "verdura_salsa.jpg", code: "6958", nome: "Salsa" },
+            { src: "verdura_salsa_mista.jpg", code: "6965", nome: "Salsa Mista" },
+            { src: "verdura_salsao.jpg", code: "6972", nome: "Salsão" },
+            { src: "abobora_baiana.jpg", code: "63", nome: "Abobora Baiana" },
+            { src: "abobora_baianinha.jpg", code: "701", nome: "Abóbora Baianinha" },
+            { src: "abobora_italia.jpg", code: "702", nome: "Abóbora Itália" },
+            { src: "abobora_japonesa.jpg", code: "703", nome: "Abóbora Japonesa" },
+            { src: "abobora_menina.jpg", code: "704", nome: "Abóbora Menina" },
+            { src: "abobora_moranga.jpg", code: "705", nome: "Abóbora Moranga" },
+            { src: "alho_roxo.jpg", code: "742", nome: "Alho Roxo" },
+            { src: "batata_baroa.jpg", code: "706", nome: "Batata Baroa" },
+            { src: "batata_doce.jpg", code: "708", nome: "Batata Doce" },
+            { src: "batata_doce_branca.jpg", code: "195", nome: "Batata Doce Branca" },
+            { src: "batata_iacom.jpg", code: "709", nome: "Batata Iacom" },
+            { src: "batata_inglesa.jpg", code: "710", nome: "Batata Inglesa" },
+            { src: "beringela.jpg", code: "741", nome: "Beringela" },
+            { src: "beterraba.jpg", code: "711", nome: "Beterraba" },
+            { src: "cara.jpg", code: "712", nome: "Cará" },
+            { src: "cebola.jpg", code: "714", nome: "Cebola" },
+            { src: "cebola_roxa.jpg", code: "715", nome: "Cebola Roxa" },
+            { src: "cenoura.jpg", code: "716", nome: "Cenoura" },
+            { src: "chuchu.jpg", code: "718", nome: "Chuchu" },
+            { src: "couve_flor.jpg", code: "717", nome: "Couve-Flor" },
+            { src: "ervilha.jpg", code: "767", nome: "Ervilha" },
+            { src: "feijao_verde.jpg", code: "719", nome: "Feijão Verde" },
+            { src: "gengibre.jpg", code: "720", nome: "Gengibre" },
+            { src: "inhame.jpg", code: "721", nome: "Inhame" },
+            { src: "jilo_branco.jpg", code: "722", nome: "Jiló Branco" },
+            { src: "jilo_preto.jpg", code: "723", nome: "Jiló Preto" },
+            { src: "maxixe.jpg", code: "725", nome: "Maxixe" },
+            { src: "milho_verde.jpg", code: "726", nome: "Milho Verde" },
+            { src: "pepino_caipira.jpg", code: "727", nome: "Pepino Caipira" },
+            { src: "pepino_japones.jpg", code: "728", nome: "Pepino Japonês" },
+            { src: "pepino_preto.jpg", code: "729", nome: "Pepino Preto" },
+            { src: "pimentao_amarelo.jpg", code: "731", nome: "Pimentão Amarelo" },
+            { src: "pimentao_verde.jpg", code: "732", nome: "Pimentão Verde" },
+            { src: "pimentao_vermelho.jpg", code: "733", nome: "Pimentão Vermelho" },
+            { src: "quiabo.jpg", code: "734", nome: "Quiabo" },
+            { src: "repolho.jpg", code: "735", nome: "Repolho" },
+            { src: "repolho_roxo.jpg", code: "736", nome: "Repolho Roxo" },
+            { src: "tomate.jpg", code: "737", nome: "Tomate" },
+            { src: "tomate_cereja.jpg", code: "738", nome: "Tomate Cereja" },
+            { src: "tomate_italiano.jpg", code: "765", nome: "765" },
+            { src: "vagem.jpg", code: "739", nome: "Vagem" },
+            { src: "vagem_escura.jpg", code: "293", nome: "Vagem Escura" },
+
+            { src: "abacate.jpg", code: "601", nome: "601" },
+            { src: "verdura_abacaxi.jpg", code: "12546", nome: "Abacaxi" },
+            { src: "ameixa.jpg", code: "603", nome: "Ameixa" },
+            { src: "banana_maca.jpg", code: "604", nome: "Banana Maçã" },
+            { src: "banana_marmelo.jpg", code: "605", nome: "Banana Marmelo" },
+            { src: "banana_nanica.jpg", code: "606", nome: "Banana Nanica" },
+            { src: "banana_prata.jpg", code: "647", nome: "Banana Prata" },
+            { src: "banana_terra.jpg", code: "607", nome: "Banana Terra" },
+            { src: "caja_manga.jpg", code: "645", nome: "Cajá Manga" },
+            { src: "caju.jpg", code: "649", nome: "Cajú" },
+            { src: "caqui.jpg", code: "608", nome: "Caqui" },
+            { src: "carambola.jpg", code: "974", nome: "Carambola" },
+            { src: "coco_seco.jpg", code: "609", nome: "Coco Seco" },
+            { src: "goiaba.jpg", code: "611", nome: "Goiaba" },
+            { src: "graviola.jpg", code: "612", nome: "Graviola" },
+            { src: "kiwi.jpg", code: "613", nome: "Kiwi" },
+            { src: "laranja_bahia.jpg", code: "646", nome: "Laranja Bahia" },
+            { src: "laranja_cristal.jpg", code: "1242", nome: "Laranja Cristal" },
+            { src: "laranja_lima.jpg", code: "614", nome: "Laranja Lima" },
+            { src: "laranja_pera.jpg", code: "615", nome: "Laranja Pera" },
+            { src: "limao.jpg", code: "618", nome: "618" },
+            { src: "maca_argentina.jpg", code: "619", nome: "Maçã Argentina" },
+            { src: "maca_nacional.jpg", code: "620", nome: "Maçã Nacional" },
+            { src: "maca_verde.jpg", code: "621", nome: "Maçã Verde" },
+            { src: "mamao_formosa.jpg", code: "622", nome: "Mamão Formosa" },
+            { src: "mamao_papaia.jpg", code: "623", nome: "Mamão Papaia" },
+            { src: "manga_palmer.jpg", code: "624", nome: "Manga Palmer" },
+            { src: "Manga tommy.jpg", code: "625", nome: "Manga Tommy" },
+            { src: "maracuja.jpg", code: "626", nome: "Maracujá" },
+            { src: "melancia.jpg", code: "627", nome: "Melancia" },
+            { src: "melancia_pingo_doce.jpg", code: "1299", nome: "Melancia Pingo Doce" },
+            { src: "melancia_sem_caroco.jpg", code: "656", nome: "Melancia Sem Caroço" },
+            { src: "melao_amarelo.jpg", code: "628", nome: "Melão Amarelo" },
+            { src: "melao_cepi.jpg", code: "773", nome: "Melão Cepi" },
+            { src: "melao_galia.jpg", code: "973", nome: "Melão Gália" },
+            { src: "melao_orange.jpg", code: "629", nome: "Melão Orange" },
+            { src: "melao_verde.jpg", code: "630", nome: "Melão Verde" },
+            { src: "mexirica_carioca.jpg", code: "1", nome: "Mexirica Carioca" },
+            { src: "mexirica_murcote.jpg", code: "658", nome: "Mexirica Murcote" },
+            { src: "mexirica_ponkan.jpg", code: "631", nome: "Mexirica Ponkan" },
+            { src: "morango.jpg", code: "632", nome: "Morango" },
+            { src: "nectarina.jpg", code: "633", nome: "Nectarina" },
+            { src: "pera.jpg", code: "634", nome: "Pêra" },
+            { src: "pessego.jpg", code: "637", nome: "Pêssego" },
+            { src: "pinha_atemoia.jpg", code: "1248", nome: "Pinha Atemoia" },
+            { src: "pitaia_polpa_branca.jpg", code: "771", nome: "Pitaia Polpa Branca" },
+            { src: "pitaia_polpa_roxa.jpg", code: "1439", nome: "Pitaia Polpa Roxa" },
+            { src: "siringuela.jpg", code: "638", nome: "Seringuela" },
+            { src: "tamarindo.jpg", code: "949", nome: "Tamarindo" },
+
+
+
+
+
+
+        ];
+
+        let images = [];
+        let currentIndex = 0;
+        let score = 0;
+        let timeLeft = 60;
+        let timer;
+
+        const imageElement = document.getElementById("image");
+        const loadingElement = document.getElementById("loading");
+        const inputElement = document.getElementById("codeInput");
+        const messageElement = document.getElementById("message");
+        const scoreElement = document.getElementById("score");
+        const timerElement = document.getElementById("timer");
+        const menuElement = document.getElementById("menu");
+        const gameContainer = document.getElementById("game-container");
+        const aboutMenu = document.getElementById("about-menu");
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startGame(randomMode) {
+            images = randomMode ? shuffleArray([...originalImages]) : [...originalImages];
+            currentIndex = 0;
+            score = 0;
+            timeLeft = 60;
+            menuElement.style.display = "none";
+            gameContainer.style.display = "block";
+            imageElement.src = images[currentIndex].src;
+            imageElement.style.opacity = 1;
+            scoreElement.textContent = "⭐ Pontuação: 0";
+            inputElement.value = "";
+            messageElement.textContent = "";
+            startTimer();
+        }
+
+        function showAbout() {
+            aboutMenu.style.display = "block";
+        }
+
+        function hideAbout() {
+            aboutMenu.style.display = "none";
+        }
+
+        function showMessage(text, color) {
+            messageElement.textContent = text;
+            messageElement.style.color = color;
+            messageElement.style.display = "block";
+
+            document.removeEventListener("click", hideMessage);
+
+            setTimeout(() => {
+                document.addEventListener("click", hideMessage);
+            }, 100);
+        }
+
+        function hideMessage() {
+            messageElement.style.display = "none";
+            document.removeEventListener("click", hideMessage);
+            startTimer();
+        }
+
+        function startTimer() {
+            timeLeft = 60;
+            timerElement.textContent = `⏳ ${timeLeft}s`;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                timerElement.textContent = `⏳ ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    score -= 5;
+                    showMessage("Tempo esgotado!", "red");
+                    document.body.style.backgroundColor = "red";
+                    setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
+                    scoreElement.textContent = `⭐ Pontuação: ${score}`;
+                    nextImage();
+                }
+            }, 1000);
+        }
+
+        function nextImage() {
+            currentIndex++;
+            if (currentIndex < images.length) {
+                imageElement.style.opacity = 0;
+                loadingElement.style.display = "block";
+
+                const newImage = new Image();
+                newImage.src = images[currentIndex].src;
+                
+                newImage.onload = () => {
+                    setTimeout(() => {
+                        imageElement.src = newImage.src;
+                        imageElement.style.opacity = 1;
+                        loadingElement.style.display = "none";
+                        inputElement.value = "";
+                        if (messageElement.style.display === "none") {
+                            startTimer();
+                        }
+                    }, 500);
+                };
+                
+                newImage.onerror = () => {
+                    loadingElement.textContent = "Carregando a imagem...";
+                    setTimeout(() => {
+                        loadingElement.style.display = "none";
+                        nextImage();
+                    }, 100);
+                };
+            } else {
+                showMessage("Parabéns! Você concluiu o jogo.", "green");
+                clearInterval(timer);
+                setTimeout(() => {
+                    gameContainer.style.display = "none";
+                    menuElement.style.display = "block";
+                }, 10000);
+            }
+        }
+
+        function checkCode() {
+            if (inputElement.value.trim() === "") {
+                showMessage("Digite um código!", "red");
+                return;
+            }
+            if (inputElement.value === images[currentIndex].code) {
+                let points = Math.round(timeLeft / 5);
+                score += points;
+                messageElement.style.display = "none"; // Fecha qualquer mensagem anterior
+                messageElement.style.backgroundColor = "rgba(255, 255, 255, 0.9)"; // Redefine o fundo
+                messageElement.style.color = "green"; // Define cor para acerto
+                showMessage(`ACERTOU! (${images[currentIndex].nome})`, "green");
+                document.body.style.backgroundColor = "green";
+                setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
+                clearInterval(timer);
+                setTimeout(() => {
+                    messageElement.style.display = "none";
+                    nextImage();
+                }, 2000);
+            } else {
+                score -= 5;
+                messageElement.style.display = "none"; // Fecha qualquer mensagem anterior
+                messageElement.style.backgroundColor = "rgba(255, 255, 255, 0.9)"; // Redefine o fundo
+                messageElement.style.color = "red"; // Define cor para erro
+                showMessage("CÓDIGO ERRADO!", "red");
+                document.body.style.backgroundColor = "red";
+                setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
+                inputElement.value = "";
+            }
+            scoreElement.textContent = `⭐ Pontuação: ${score}`;
+        }
+
+        function showHint() {
+            const hintMessage = `${images[currentIndex].nome} - ${images[currentIndex].code}`;
+            messageElement.textContent = hintMessage;
+            messageElement.style.color = "white";
+            messageElement.style.backgroundColor = "blue";
+            messageElement.style.display = "block";
+            
+            setTimeout(() => {
+                messageElement.style.display = "none";
+                messageElement.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+                messageElement.style.color = "#333";
+                messageElement.textContent = "";
+            }, 5000);
+        }
+
+        function skipImage() {
+            score -= 2;
+            showMessage("Imagem pulada!", "orange");
+            document.body.style.backgroundColor = "orange";
+            setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
+            nextImage();
+            scoreElement.textContent = `⭐ Pontuação: ${score}`;
+        }
+
+        function restartGame() {
+            currentIndex = 0;
+            score = 0;
+            imageElement.src = images[currentIndex].src;
+            imageElement.style.opacity = 1;
+            inputElement.value = "";
+            messageElement.textContent = "";
+            scoreElement.textContent = "⭐ Pontuação: 0";
+            startTimer();
+        }
+
+        function clearInput() {
+            inputElement.value = "";
+        }
+
+        function handleComma() {
+            if (images[currentIndex].src.startsWith("verdura_")) {
+                score -= 5;
+                showMessage("Este item é vendido pela Unidade, use Enter!", "red");
+                document.body.style.backgroundColor = "red";
+                setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
+                scoreElement.textContent = `⭐ Pontuação: ${score}`;
+            } else {
+                checkCode();
+            }
+        }
+
+        function handleEnter() {
+            if (images[currentIndex].src.startsWith("verdura_")) {
+                checkCode();
+            } else {
+                score -= 5;
+                showMessage("Utilize a vírgula para pesar!", "red");
+                document.body.style.backgroundColor = "red";
+                setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
+                scoreElement.textContent = `⭐ Pontuação: ${score}`;
+            }
+        }
+
+        document.querySelectorAll(".key").forEach(key => {
+            key.addEventListener("click", () => {
+                if (key.classList.contains("comma")) {
+                    handleComma();
+                } else if (key.classList.contains("enter")) {
+                    handleEnter();
+                } else {
+                    if (inputElement.value.length < 10) {
+                        inputElement.value += key.textContent;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
