@@ -107,6 +107,13 @@
             font-weight: bold;
             color: #333;
         }
+        .sound-toggle-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 5px;
+        }
         .keyboard {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -267,6 +274,7 @@
         <button class="sequential-button" onclick="startGame(false)">Sequencial</button>
         <button class="random-button" onclick="startGame(true)">Modo Aleatório</button>
         <button class="about-button" onclick="showAbout()">Sobre</button>
+        <button id="sound-toggle" onclick="toggleSound()" style="background-color: #9c27b0; margin-top: 10px;">Ativar Sons</button>
     </div>
     <div id="about-menu">
         <button class="close-button" onclick="hideAbout()">X</button>
@@ -276,6 +284,7 @@
         <div class="info-container">
             <p id="score">⭐ Pontuação: 0</p>
             <p id="timer">⏳ 60s</p>
+            <button id="sound-toggle-btn" class="sound-toggle-btn" onclick="toggleSound()">🔈</button>
         </div>
         <div class="image-container">
             <img id="image" src="alface.jpg" alt="Verdura">
@@ -307,9 +316,10 @@
             <button class="restart-button" onclick="restartGame()">Reiniciar</button>
         </div>
     </div>
+    <audio id="correctSound" src="acertou.mp3"></audio>
+    <audio id="errorSound" src="errou.mp3"></audio>
     <script>
         const originalImages = [
-//          { src: "AAAA.jpg", code: "00", nome: "AAA" },
             { src: "verdura_acelga.jpg", code: "6705", nome: "Acelga" },
             { src: "verdura_agriao.jpg", code: "6712", nome: "Agrião" },
             { src: "verdura_alecrim.jpg", code: "6989", nome: "Alecrim" },
@@ -380,11 +390,10 @@
             { src: "repolho_roxo.jpg", code: "736", nome: "Repolho Roxo" },
             { src: "tomate.jpg", code: "737", nome: "Tomate" },
             { src: "tomate_cereja.jpg", code: "738", nome: "Tomate Cereja" },
-            { src: "tomate_italiano.jpg", code: "765", nome: "765" },
+            { src: "tomate_italiano.jpg", code: "765", nome: "Tomate Italiano" },
             { src: "vagem.jpg", code: "739", nome: "Vagem" },
             { src: "vagem_escura.jpg", code: "293", nome: "Vagem Escura" },
-
-            { src: "abacate.jpg", code: "601", nome: "601" },
+            { src: "abacate.jpg", code: "601", nome: "Abacate" },
             { src: "verdura_abacaxi.jpg", code: "12546", nome: "Abacaxi" },
             { src: "ameixa.jpg", code: "603", nome: "Ameixa" },
             { src: "banana_maca.jpg", code: "604", nome: "Banana Maçã" },
@@ -404,7 +413,7 @@
             { src: "laranja_cristal.jpg", code: "1242", nome: "Laranja Cristal" },
             { src: "laranja_lima.jpg", code: "614", nome: "Laranja Lima" },
             { src: "laranja_pera.jpg", code: "615", nome: "Laranja Pera" },
-            { src: "limao.jpg", code: "618", nome: "618" },
+            { src: "limao.jpg", code: "618", nome: "Limão" },
             { src: "maca_argentina.jpg", code: "619", nome: "Maçã Argentina" },
             { src: "maca_nacional.jpg", code: "620", nome: "Maçã Nacional" },
             { src: "maca_verde.jpg", code: "621", nome: "Maçã Verde" },
@@ -433,12 +442,6 @@
             { src: "pitaia_polpa_roxa.jpg", code: "1439", nome: "Pitaia Polpa Roxa" },
             { src: "siringuela.jpg", code: "638", nome: "Seringuela" },
             { src: "tamarindo.jpg", code: "949", nome: "Tamarindo" },
-
-
-
-
-
-
         ];
 
         let images = [];
@@ -446,6 +449,7 @@
         let score = 0;
         let timeLeft = 60;
         let timer;
+        let soundEnabled = false;
 
         const imageElement = document.getElementById("image");
         const loadingElement = document.getElementById("loading");
@@ -456,6 +460,10 @@
         const menuElement = document.getElementById("menu");
         const gameContainer = document.getElementById("game-container");
         const aboutMenu = document.getElementById("about-menu");
+        const correctSound = document.getElementById("correctSound");
+        const errorSound = document.getElementById("errorSound");
+        const soundToggleButton = document.getElementById("sound-toggle");
+        const soundToggleBtn = document.getElementById("sound-toggle-btn");
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -463,6 +471,20 @@
                 [array[i], array[j]] = [array[j], array[i]];
             }
             return array;
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundToggleButton.textContent = soundEnabled ? "Desativar Sons" : "Ativar Sons";
+            soundToggleButton.style.backgroundColor = soundEnabled ? "#f44336" : "#9c27b0";
+            soundToggleBtn.textContent = soundEnabled ? "🔈" : "🔇";
+        }
+
+        function playSound(sound) {
+            if (soundEnabled) {
+                sound.currentTime = 0;
+                sound.play();
+            }
         }
 
         function startGame(randomMode) {
@@ -477,6 +499,7 @@
             scoreElement.textContent = "⭐ Pontuação: 0";
             inputElement.value = "";
             messageElement.textContent = "";
+            soundToggleBtn.textContent = soundEnabled ? "🔈" : "🔇";
             startTimer();
         }
 
@@ -566,15 +589,17 @@
         function checkCode() {
             if (inputElement.value.trim() === "") {
                 showMessage("Digite um código!", "red");
+                playSound(errorSound);
                 return;
             }
             if (inputElement.value === images[currentIndex].code) {
                 let points = Math.round(timeLeft / 5);
                 score += points;
-                messageElement.style.display = "none"; // Fecha qualquer mensagem anterior
-                messageElement.style.backgroundColor = "rgba(255, 255, 255, 0.9)"; // Redefine o fundo
-                messageElement.style.color = "green"; // Define cor para acerto
+                messageElement.style.display = "none";
+                messageElement.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+                messageElement.style.color = "green";
                 showMessage(`ACERTOU! (${images[currentIndex].nome})`, "green");
+                playSound(correctSound);
                 document.body.style.backgroundColor = "green";
                 setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
                 clearInterval(timer);
@@ -584,10 +609,11 @@
                 }, 2000);
             } else {
                 score -= 5;
-                messageElement.style.display = "none"; // Fecha qualquer mensagem anterior
-                messageElement.style.backgroundColor = "rgba(255, 255, 255, 0.9)"; // Redefine o fundo
-                messageElement.style.color = "red"; // Define cor para erro
+                messageElement.style.display = "none";
+                messageElement.style.backgroundColor = "rgba(255, 255, 255, 0.9)";
+                messageElement.style.color = "red";
                 showMessage("CÓDIGO ERRADO!", "red");
+                playSound(errorSound);
                 document.body.style.backgroundColor = "red";
                 setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
                 inputElement.value = "";
@@ -638,6 +664,7 @@
             if (images[currentIndex].src.startsWith("verdura_")) {
                 score -= 5;
                 showMessage("Este item é vendido pela Unidade, use Enter!", "red");
+                playSound(errorSound);
                 document.body.style.backgroundColor = "red";
                 setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
                 scoreElement.textContent = `⭐ Pontuação: ${score}`;
@@ -652,6 +679,7 @@
             } else {
                 score -= 5;
                 showMessage("Utilize a vírgula para pesar!", "red");
+                playSound(errorSound);
                 document.body.style.backgroundColor = "red";
                 setTimeout(() => document.body.style.backgroundColor = "#f4f4f4", 500);
                 scoreElement.textContent = `⭐ Pontuação: ${score}`;
