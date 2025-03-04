@@ -441,7 +441,7 @@
             { src: "verdura_ervas.jpg", code: "6873", nome: "Ervas" },
             { src: "verdura_espinafre.jpg", code: "6880", nome: "Espinafre" },
             { src: "verdura_hortela.jpg", code: "6897", nome: "Hortelã" },
-            { src: "verdura_menjericao.jpg", code: "6903", nome: "Manjericão" },
+            { src: "verdura_manjericao.jpg", code: "6903", nome: "Manjericão" },
             { src: "verdura_mostarda.jpg", code: "6910", nome: "Mostarda" },
             { src: "verdura_nabo.jpg", code: "6927", nome: "Nabo" },
             { src: "verdura_rabanete.jpg", code: "6934", nome: "Rabanete" },
@@ -548,6 +548,7 @@
         let timeLeft = 60;
         let timer;
         let soundEnabled = true; // Som começa ativado
+        let faustaoMode = false; // Variável para rastrear o modo Faustão
 
         const imageElement = document.getElementById("image");
         const loadingElement = document.getElementById("loading");
@@ -620,6 +621,9 @@
             currentIndex = 0;
             score = 0;
             timeLeft = 60;
+            faustaoMode = false; // Reseta o modo Faustão ao iniciar o jogo
+            correctSound.src = "acertou.mp3"; // Reseta o som de acerto
+            errorSound.src = "errou.mp3"; // Reseta o som de erro
             menuElement.style.display = "none";
             gameContainer.style.display = "block";
             imageElement.src = images[currentIndex].src;
@@ -721,6 +725,17 @@
                 showMessage("Digite um código!", "red");
                 playSound(errorSound);
                 vibrate(200); // Vibração depende de soundEnabled
+                return;
+            }
+            if (inputElement.value === "40028922") { // Verifica o código do easter egg
+                faustaoMode = true;
+                correctSound.src = "acertouf.mp3"; // Troca o som de acerto
+                errorSound.src = "errouf.mp3"; // Troca o som de erro
+                showMessage("Modo Faustão Ativado", "yellow");
+                inputElement.value = "";
+                setTimeout(() => {
+                    messageElement.style.display = "none";
+                }, 2000);
                 return;
             }
             if (inputElement.value === images[currentIndex].code) {
