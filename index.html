@@ -15,27 +15,22 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        transition: background-color 0.5s;
     }
     img {
-        width: 250px;
+        width: 300px; /* Igualado ao max-width do teclado */
         height: 200px;
         object-fit: cover;
         margin: 10px 0;
-        border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.5);
-        transition: opacity 0.5s ease-in-out, transform 0.3s;
-    }
-    img:hover {
-        transform: scale(1.05);
+        border-radius: 5px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     }
     .image-container {
         position: relative;
-        width: 250px;
+        width: 300px; /* Igualado ao max-width do teclado */
         height: 200px;
         margin: 10px auto;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 15px;
+        background: #fff;
+        border-radius: 5px;
         padding: 10px;
     }
     .loading {
@@ -44,8 +39,7 @@
         left: 50%;
         transform: translate(-50%, -50%);
         font-size: 20px;
-        color: #fff;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        color: #333;
         font-weight: bold;
         display: none;
     }
@@ -61,16 +55,14 @@
         text-align: center;
         width: 100%;
         box-sizing: border-box;
-        border: none;
-        border-radius: 25px;
-        background: linear-gradient(145deg, #fff, #d9f0ff);
-        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.2);
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         outline: none;
-        transition: all 0.3s;
     }
     input:focus {
-        background: #fff;
-        box-shadow: 0 0 10px rgba(0, 153, 255, 0.7);
+        border-color: #0099ff;
     }
     input:disabled {
         cursor: not-allowed;
@@ -81,19 +73,18 @@
         right: 10px;
         top: 50%;
         transform: translateY(-50%);
-        background: linear-gradient(#ff6666, #cc3333);
+        background: #ff6666;
         color: white;
         border: none;
         font-size: 16px;
         cursor: pointer;
         padding: 6px 12px;
-        border-radius: 15px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s;
     }
     .clear-button:hover {
-        background: linear-gradient(#cc3333, #990000);
-        transform: translateY(-48%);
+        background: #cc3333;
     }
     #message {
         font-size: 20px;
@@ -106,11 +97,10 @@
         transform: translate(-50%, -50%);
         background: rgba(0, 0, 0, 0.7);
         padding: 15px 25px;
-        border-radius: 20px;
-        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         z-index: 10;
         display: none;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
     }
     .info-container {
         display: flex;
@@ -118,32 +108,30 @@
         align-items: center;
         margin: 15px auto;
         max-width: 320px;
-        background: rgba(255, 255, 255, 0.85);
+        background: #fff;
         padding: 10px 15px;
-        border-radius: 20px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        backdrop-filter: blur(5px);
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     .info-container p {
         margin: 0;
         font-size: 18px;
         font-weight: bold;
         color: #0066cc;
-        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
     }
     .sound-toggle-btn {
-        background: linear-gradient(#66ccff, #3399ff);
+        background: #66ccff;
         border: none;
         font-size: 18px;
         cursor: pointer;
         padding: 5px 10px;
-        border-radius: 15px;
+        border-radius: 5px;
         color: white;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s;
     }
     .sound-toggle-btn:hover {
-        background: linear-gradient(#3399ff, #0066cc);
+        background: #3399ff;
     }
     .keyboard {
         display: grid;
@@ -159,26 +147,31 @@
         font-size: 20px;
         text-align: center;
         line-height: 60px;
-        background: linear-gradient(#f0f0f0, #d9d9d9);
+        background: #f0f0f0;
         border: none;
-        border-radius: 15px;
+        border-radius: 5px;
         cursor: pointer;
         user-select: none;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), inset 0 2px 5px rgba(255, 255, 255, 0.7);
-        transition: all 0.3s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s;
     }
     .key:hover {
-        background: linear-gradient(#d9d9d9, #bfbfbf);
-        transform: translateY(-2px);
+        background: #d9d9d9;
     }
     .key.comma {
-        background: linear-gradient(#66cc66, #339933);
+        background: #66cc66;
         color: white;
         font-size: 30px;
     }
+    .key.comma:hover {
+        background: #339933;
+    }
     .key.enter {
-        background: linear-gradient(#66b3ff, #3385ff);
+        background: #66b3ff;
         color: white;
+    }
+    .key.enter:hover {
+        background: #3385ff;
     }
     .action-buttons {
         display: flex;
@@ -192,52 +185,47 @@
         border: none;
         cursor: pointer;
         color: white;
-        border-radius: 20px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s;
     }
     .action-buttons .hint-button {
-        background: linear-gradient(#66cc66, #339933);
+        background: #66cc66;
     }
     .action-buttons .hint-button:hover {
-        background: linear-gradient(#339933, #226622);
-        transform: translateY(-2px);
+        background: #339933;
     }
     .action-buttons .skip-button {
-        background: linear-gradient(#ffcc66, #ff9933);
+        background: #ffcc66;
     }
     .action-buttons .skip-button:hover {
-        background: linear-gradient(#ff9933, #cc6600);
-        transform: translateY(-2px);
+        background: #ff9933;
     }
     .action-buttons .restart-button {
-        background: linear-gradient(#66b3ff, #3385ff);
+        background: #66b3ff;
     }
     .action-buttons .restart-button:hover {
-        background: linear-gradient(#3385ff, #1a66cc);
-        transform: translateY(-2px);
+        background: #3385ff;
     }
     #menu {
-        background: rgba(255, 255, 255, 0.9);
+        background: #fff;
         padding: 30px;
-        border-radius: 25px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         z-index: 20;
         text-align: center;
-        backdrop-filter: blur(8px);
     }
     #menu h1 {
         margin: 0 0 15px 0;
         font-size: 28px;
         color: #0066cc;
-        text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
     }
     #menu img {
         width: 150px;
         height: 120px;
         margin-bottom: 20px;
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     #menu button {
         display: block;
@@ -246,32 +234,29 @@
         padding: 12px;
         font-size: 18px;
         border: none;
-        border-radius: 20px;
+        border-radius: 5px;
         color: white;
         cursor: pointer;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s;
     }
     #menu .sequential-button {
-        background: linear-gradient(#66b3ff, #3385ff);
+        background: #66b3ff;
     }
     #menu .sequential-button:hover {
-        background: linear-gradient(#3385ff, #1a66cc);
-        transform: translateY(-2px);
+        background: #3385ff;
     }
     #menu .random-button {
-        background: linear-gradient(#66cc66, #339933);
+        background: #66cc66;
     }
     #menu .random-button:hover {
-        background: linear-gradient(#339933, #226622);
-        transform: translateY(-2px);
+        background: #339933;
     }
     #menu .about-button {
-        background: linear-gradient(#ffcc66, #ff9933);
+        background: #ffcc66;
     }
     #menu .about-button:hover {
-        background: linear-gradient(#ff9933, #cc6600);
-        transform: translateY(-2px);
+        background: #ff9933;
     }
     #game-container {
         display: none;
@@ -282,31 +267,30 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(255, 255, 255, 0.95);
+        background: #fff;
         padding: 25px;
-        border-radius: 20px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         z-index: 30;
         max-width: 320px;
         text-align: left;
-        backdrop-filter: blur(5px);
     }
     #about-menu .close-button {
         position: absolute;
         top: 10px;
         right: 10px;
-        background: linear-gradient(#ff6666, #cc3333);
+        background: #ff6666;
         color: white;
         border: none;
         font-size: 16px;
         cursor: pointer;
         padding: 5px 10px;
-        border-radius: 15px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s;
     }
     #about-menu .close-button:hover {
-        background: linear-gradient(#cc3333, #990000);
+        background: #cc3333;
     }
     #about-menu p {
         margin: 15px 0 0 0;
@@ -319,14 +303,13 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(255, 255, 255, 0.95);
+        background: #fff;
         padding: 25px;
-        border-radius: 20px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
         z-index: 30;
         max-width: 320px;
         text-align: center;
-        backdrop-filter: blur(5px);
     }
     #restart-menu p {
         margin: 0 0 20px 0;
@@ -339,24 +322,22 @@
         border: none;
         cursor: pointer;
         color: white;
-        border-radius: 20px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s;
         margin: 0 10px;
     }
     #restart-menu .confirm-button {
-        background: linear-gradient(#66b3ff, #3385ff);
+        background: #66b3ff;
     }
     #restart-menu .confirm-button:hover {
-        background: linear-gradient(#3385ff, #1a66cc);
-        transform: translateY(-2px);
+        background: #3385ff;
     }
     #restart-menu .cancel-button {
-        background: linear-gradient(#ff6666, #cc3333);
+        background: #ff6666;
     }
     #restart-menu .cancel-button:hover {
-        background: linear-gradient(#cc3333, #990000);
-        transform: translateY(-2px);
+        background: #cc3333;
     }
 </style>
 </head>
